@@ -1,4 +1,5 @@
 import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
+import { AppError } from "../errors/AppError.js";
 import { env } from "./env.js";
 
 cloudinary.config({
@@ -15,7 +16,10 @@ export const uploadImage = (buffer: Buffer, folder: string) =>
         { folder: `parcelpath/${folder}`, resource_type: "image" },
         (error, result) => {
           if (error || !result) {
-            return reject(error ?? new Error("Image upload failed"));
+            console.error("Cloudinary upload failed:", error);
+            return reject(
+              new AppError(502, `Image upload failed: ${error?.message ?? "no response"}`),
+            );
           }
           resolve(result);
         },

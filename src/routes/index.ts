@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { adminRoutes } from "../modules/admin/admin.route.js";
 import { authRoutes } from "../modules/auth/auth.route.js";
 import { hubRoutes } from "../modules/hub/hub.route.js";
 import { paymentRoutes } from "../modules/payment/payment.route.js";
@@ -12,5 +13,6 @@ router.use("/users", userRoutes);
 router.use("/hubs", hubRoutes);
 router.use("/shipments", shipmentRoutes);
 router.use("/payments", paymentRoutes);
+router.use("/admin", adminRoutes);
 
 export default router;

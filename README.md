@@ -14,7 +14,7 @@ Project Name    : ParcelPath - Courier & Logistics Platform
 Backend Repo    : https://github.com/ars2k03/ParcelPath-API
 Live API        : https://parcel-path-api.vercel.app/api/v1
 API Docs        : https://documenter.getpostman.com/view/54739800/2sBYHSz1qW
-Demo Video      : <video url>
+Demo Video      : Not submitted
 Admin Email     : admin@parcelpath.com
 Admin Password  : Shared privately in the submission form
 ```
@@ -219,6 +219,15 @@ src/
 ```
 
 Each module follows Route → Controller → Service → Prisma, with Zod schemas in `*.validation.ts`.
+
+## Test Reports
+
+| Report | Environment | Result |
+| --- | --- | --- |
+| [Local test report](docs/LOCAL_REPORT.md) | Local server with Neon, Upstash, Stripe sandbox and Cloudinary | 150 / 150 passed |
+| [Live server report](docs/LIVE_REPORT.md) | Production deployment on Vercel | 148 / 148 passed |
+
+Both runs cover all 36 endpoints, the three roles, validation and error responses, real Stripe sandbox payments with webhooks and refunds, and Cloudinary uploads.
 
 ## Deployment (Vercel)
 

@@ -1,0 +1,1973 @@
+{
+  "info": {
+    "name": "ParcelPath API",
+    "description": "Courier and logistics management REST API.\n\nRoles: CUSTOMER, COURIER, ADMIN. Log in with each role first; the login requests store tokens in collection variables automatically.\n\nAll responses follow `{ success, message, data }` on success and `{ success, message, errors }` on failure.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1"
+    },
+    {
+      "key": "customerToken",
+      "value": ""
+    },
+    {
+      "key": "courierToken",
+      "value": ""
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "originHubId",
+      "value": ""
+    },
+    {
+      "key": "destinationHubId",
+      "value": ""
+    },
+    {
+      "key": "hubId",
+      "value": ""
+    },
+    {
+      "key": "shipmentId",
+      "value": ""
+    },
+    {
+      "key": "trackingNumber",
+      "value": ""
+    },
+    {
+      "key": "paymentId",
+      "value": ""
+    },
+    {
+      "key": "checkoutSessionId",
+      "value": ""
+    },
+    {
+      "key": "courierId",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "googleIdToken",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set(\"customerToken\", res.data.accessToken);",
+                  "  pm.collectionVariables.set(\"refreshToken\", res.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Customer\",\n  \"email\": \"test.customer@example.com\",\n  \"password\": \"Passw0rd123\",\n  \"phone\": \"01712345678\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set(\"customerToken\", res.data.accessToken);",
+                  "  pm.collectionVariables.set(\"refreshToken\", res.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@parcelpath.com\",\n  \"password\": \"<demo password>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Courier",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set(\"courierToken\", res.data.accessToken);",
+                  "  pm.collectionVariables.set(\"refreshToken\", res.data.refreshToken);",
+                  "  pm.collectionVariables.set(\"courierId\", res.data.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"courier@parcelpath.com\",\n  \"password\": \"<demo password>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set(\"adminToken\", res.data.accessToken);",
+                  "  pm.collectionVariables.set(\"refreshToken\", res.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"<admin email>\",\n  \"password\": \"<admin password>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login with Google",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set(\"customerToken\", res.data.accessToken);",
+                  "  pm.collectionVariables.set(\"refreshToken\", res.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"{{googleIdToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "google"
+              ]
+            },
+            "description": "Send a Google ID token obtained from Google Identity Services (or the OAuth Playground with your own client)."
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set(\"refreshToken\", res.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh-token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Updated Customer",
+                  "type": "text"
+                },
+                {
+                  "key": "phone",
+                  "value": "01987654321",
+                  "type": "text"
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Hubs",
+      "item": [
+        {
+          "name": "Create Hub",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set(\"hubId\", res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mymensingh Hub\",\n  \"code\": \"MYM\",\n  \"city\": \"Mymensingh\",\n  \"address\": \"Ganginarpar, Mymensingh\",\n  \"phone\": \"01700000006\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/hubs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hubs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Hubs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "const hubs = res.data?.items ?? [];",
+                  "if (hubs[0]) pm.collectionVariables.set(\"originHubId\", hubs[0].id);",
+                  "if (hubs[1]) pm.collectionVariables.set(\"destinationHubId\", hubs[1].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/hubs?page=1&limit=10&searchTerm=dhaka&city=Dhaka&isActive=true&sortBy=name&sortOrder=asc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hubs"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "searchTerm",
+                  "value": "dhaka",
+                  "disabled": true
+                },
+                {
+                  "key": "city",
+                  "value": "Dhaka",
+                  "disabled": true
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "name"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Hub by Id",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/hubs/{{originHubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hubs",
+                "{{originHubId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Hub",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": \"Charpara, Mymensingh\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/hubs/{{hubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hubs",
+                "{{hubId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Hub (Soft)",
+          "request": {
+            "method": "DELETE",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/hubs/{{hubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hubs",
+                "{{hubId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Shipments",
+      "item": [
+        {
+          "name": "Estimate Delivery Charge",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"originHubId\": \"{{originHubId}}\",\n  \"destinationHubId\": \"{{destinationHubId}}\",\n  \"parcelType\": \"FRAGILE\",\n  \"weightKg\": 2.5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shipments/price-estimate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "price-estimate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Shipment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set(\"shipmentId\", res.data.id);",
+                  "  pm.collectionVariables.set(\"trackingNumber\", res.data.trackingNumber);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"originHubId\": \"{{originHubId}}\",\n  \"destinationHubId\": \"{{destinationHubId}}\",\n  \"parcelType\": \"PACKAGE\",\n  \"weightKg\": 2.5,\n  \"senderName\": \"Rahim Uddin\",\n  \"senderPhone\": \"01711111111\",\n  \"pickupAddress\": \"House 12, Road 5, Dhanmondi, Dhaka\",\n  \"receiverName\": \"Karim Ahmed\",\n  \"receiverPhone\": \"01822222222\",\n  \"deliveryAddress\": \"GEC Circle, Chattogram\",\n  \"description\": \"Books and documents\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shipments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Shipments",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/shipments?page=1&limit=10&status=PENDING&parcelType=PACKAGE&originHubId={{originHubId}}&sortBy=createdAt&sortOrder=desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "status",
+                  "value": "PENDING",
+                  "disabled": true
+                },
+                {
+                  "key": "parcelType",
+                  "value": "PACKAGE",
+                  "disabled": true
+                },
+                {
+                  "key": "originHubId",
+                  "value": "{{originHubId}}",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Shipments",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/shipments/search?q=karim&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "karim"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Shipment by Id",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/shipments/{{shipmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "{{shipmentId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Shipment",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weightKg\": 3,\n  \"receiverPhone\": \"01833333333\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shipments/{{shipmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "{{shipmentId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Track Shipment (Public)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/shipments/track/{{trackingNumber}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "track",
+                "{{trackingNumber}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Courier",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courierId\": \"{{courierId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shipments/{{shipmentId}}/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "{{shipmentId}}",
+                "assign"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "My Assigned Shipments",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{courierToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/shipments/my-assigned?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "my-assigned"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Status - Picked Up (Courier)",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{courierToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PICKED_UP\",\n  \"note\": \"Parcel collected from sender\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shipments/{{shipmentId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "{{shipmentId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Status - At Origin Hub",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{courierToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"AT_ORIGIN_HUB\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shipments/{{shipmentId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "{{shipmentId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Status - In Transit (Admin)",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_TRANSIT\",\n  \"note\": \"Dispatched on linehaul truck\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shipments/{{shipmentId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "{{shipmentId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Status - At Destination Hub (Admin)",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"AT_DESTINATION_HUB\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shipments/{{shipmentId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "{{shipmentId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Status - Out for Delivery (Courier)",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{courierToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"OUT_FOR_DELIVERY\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shipments/{{shipmentId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "{{shipmentId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Status - Failed Delivery (Courier)",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{courierToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"FAILED_DELIVERY\",\n  \"failureReason\": \"Receiver not reachable\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shipments/{{shipmentId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "{{shipmentId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Status - Delivered with Proof (Courier)",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{courierToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "status",
+                  "value": "DELIVERED",
+                  "type": "text"
+                },
+                {
+                  "key": "note",
+                  "value": "Handed over to receiver",
+                  "type": "text"
+                },
+                {
+                  "key": "proofOfDelivery",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shipments/{{shipmentId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "{{shipmentId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Shipment",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"No longer needed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shipments/{{shipmentId}}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "{{shipmentId}}",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Shipment (Soft)",
+          "request": {
+            "method": "DELETE",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/shipments/{{shipmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shipments",
+                "{{shipmentId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Initiate Payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set(\"paymentId\", res.data.paymentId);",
+                  "  pm.collectionVariables.set(\"checkoutSessionId\", res.data.sessionId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shipmentId\": \"{{shipmentId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/payments/initiate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payments",
+                "initiate"
+              ]
+            },
+            "description": "Open `data.checkoutUrl` in a browser and pay with test card 4242 4242 4242 4242."
+          },
+          "response": []
+        },
+        {
+          "name": "Payment Success Redirect",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payments/success?session_id={{checkoutSessionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payments",
+                "success"
+              ],
+              "query": [
+                {
+                  "key": "session_id",
+                  "value": "{{checkoutSessionId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Payment Cancel Redirect",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payments/cancel?payment_id={{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payments",
+                "cancel"
+              ],
+              "query": [
+                {
+                  "key": "payment_id",
+                  "value": "{{paymentId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Stripe Webhook",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"note\": \"Sent by Stripe with a stripe-signature header. Use `stripe listen --forward-to localhost:5000/api/v1/payments/webhook` locally.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/payments/webhook",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payments",
+                "webhook"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "My Payments",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payments/my?page=1&limit=10&status=PAID",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payments",
+                "my"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "status",
+                  "value": "PAID",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Payment by Id",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payments/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payments",
+                "{{paymentId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "const user = res.data?.items?.find((u) => u.role !== \"ADMIN\");",
+                  "if (user) pm.collectionVariables.set(\"userId\", user.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users?page=1&limit=10&role=CUSTOMER&status=ACTIVE&searchTerm=test&sortBy=createdAt&sortOrder=desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "role",
+                  "value": "CUSTOMER",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "disabled": true
+                },
+                {
+                  "key": "searchTerm",
+                  "value": "test",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Role",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"COURIER\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/{{userId}}/role",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "users",
+                "{{userId}}",
+                "role"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Status",
+          "request": {
+            "method": "PATCH",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"BLOCKED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/{{userId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "users",
+                "{{userId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/dashboard-stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard-stats"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Audit Logs",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/audit-logs?page=1&limit=20&action=SHIPMENT_STATUS_CHANGED&entity=Shipment&sortOrder=desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "audit-logs"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "action",
+                  "value": "SHIPMENT_STATUS_CHANGED",
+                  "disabled": true
+                },
+                {
+                  "key": "entity",
+                  "value": "Shipment",
+                  "disabled": true
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Customer Forbidden Example (403)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -63,3 +63,7 @@ export const ACTIVE_COURIER_STATUSES: ShipmentStatus[] = [
 export const SHIPMENT_SORT_FIELDS = ["createdAt", "updatedAt", "price", "weightKg"] as const;
 
 export const PARCEL_TYPES = Object.values(ParcelType);
+
+export const COURIER_COMMISSION_RATE = 0.2;
+
+export const COURIER_STATS_MONTHS = 6;

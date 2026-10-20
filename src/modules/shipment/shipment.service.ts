@@ -19,6 +19,8 @@ import {
   ACTIVE_COURIER_STATUSES,
   CANCELLABLE_STATUSES,
   COURIER_ASSIGNABLE_STATUSES,
+  COURIER_COMMISSION_RATE,
+  COURIER_STATS_MONTHS,
   DELETABLE_STATUSES,
   STATUS_TRANSITIONS,
 } from "./shipment.constant.js";
@@ -51,7 +53,7 @@ const scopeByRole = (user: AuthUser): Prisma.ShipmentWhereInput => {
 };
 
 const invalidateShipmentCaches = (trackingNumber: string) =>
-  invalidateCache(`tracking:${trackingNumber}`, "admin:stats");
+  invalidateCache(`tracking:${trackingNumber}`, "admin:stats", "courier:stats:*");
 
 const findAccessibleShipment = async (user: AuthUser, id: string) => {
   const shipment = await prisma.shipment.findFirst({
@@ -196,6 +198,80 @@ const getMyAssignedShipments = (courier: AuthUser, query: ShipmentQuery) =>
     query.page,
     query.limit,
   );
+
+const toMonthKey = (date: Date) =>
+  `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+
+const roundMoney = (value: number) => Math.round(value * 100) / 100;
+
+const getCourierStats = (courier: AuthUser) =>
+  remember(`courier:stats:${courier.id}`, 60, async () => {
+    const now = new Date();
+    const since = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - (COURIER_STATS_MONTHS - 1), 1),
+    );
+
+    const [byStatus, deliveredTotals, failedAttempts, recentDeliveries] = await Promise.all([
+      prisma.shipment.groupBy({
+        by: ["status"],
+        where: { courierId: courier.id, deletedAt: null },
+        _count: { _all: true },
+        orderBy: { status: "asc" },
+      }),
+      prisma.shipment.aggregate({
+        where: { courierId: courier.id, deletedAt: null, status: ShipmentStatus.DELIVERED },
+        _sum: { price: true },
+        _count: { _all: true },
+      }),
+      prisma.trackingEvent.count({
+        where: { actorId: courier.id, status: ShipmentStatus.FAILED_DELIVERY },
+      }),
+      prisma.shipment.findMany({
+        where: {
+          courierId: courier.id,
+          deletedAt: null,
+          status: ShipmentStatus.DELIVERED,
+          deliveredAt: { gte: since },
+        },
+        select: { deliveredAt: true, price: true },
+      }),
+    ]);
+
+    const months = Array.from({ length: COURIER_STATS_MONTHS }, (_, index) => {
+      const date = new Date(Date.UTC(since.getUTCFullYear(), since.getUTCMonth() + index, 1));
+      return { month: toMonthKey(date), deliveries: 0, deliveredValue: 0, earnings: 0 };
+    });
+
+    for (const { deliveredAt, price } of recentDeliveries) {
+      if (!deliveredAt) continue;
+      const bucket = months.find((entry) => entry.month === toMonthKey(deliveredAt));
+      if (!bucket) continue;
+      bucket.deliveries += 1;
+      bucket.deliveredValue += Number(price);
+    }
+    for (const bucket of months) {
+      bucket.deliveredValue = roundMoney(bucket.deliveredValue);
+      bucket.earnings = roundMoney(bucket.deliveredValue * COURIER_COMMISSION_RATE);
+    }
+
+    const statusCounts = Object.fromEntries(byStatus.map((row) => [row.status, row._count._all]));
+    const delivered = deliveredTotals._count._all;
+    const deliveredValue = Number(deliveredTotals._sum.price ?? 0);
+    const attempts = delivered + failedAttempts;
+
+    return {
+      byStatus: statusCounts,
+      active: ACTIVE_COURIER_STATUSES.reduce((sum, status) => sum + (statusCounts[status] ?? 0), 0),
+      delivered,
+      failedAttempts,
+      successRate: attempts === 0 ? 0 : roundMoney((delivered / attempts) * 100),
+      deliveredValue: roundMoney(deliveredValue),
+      totalEarnings: roundMoney(deliveredValue * COURIER_COMMISSION_RATE),
+      commissionRate: COURIER_COMMISSION_RATE,
+      currency: "BDT",
+      monthly: months,
+    };
+  });
 
 const getShipmentById = async (user: AuthUser, id: string) => {
   const shipment = await prisma.shipment.findFirst({
@@ -529,6 +605,7 @@ export const shipmentService = {
   getShipments,
   searchShipments,
   getMyAssignedShipments,
+  getCourierStats,
   getShipmentById,
   trackShipment,
   updateShipment,

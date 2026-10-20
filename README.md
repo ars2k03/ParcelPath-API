@@ -69,6 +69,8 @@ Each status change runs inside a database transaction with a conditional update,
 | Each kg above 1 kg | 25 |
 | Parcel type surcharge | Document 0, Package 20, Fragile 60 |
 
+Couriers earn a 20% commission on the delivery charge of every parcel they deliver.
+
 ## Getting Started
 
 ### Prerequisites
@@ -162,6 +164,7 @@ List endpoints return `data.meta` (`page`, `limit`, `total`, `totalPages`) and `
 | GET | `/shipments` | Authenticated | List shipments by role with `page`, `limit`, `status`, `parcelType`, `originHubId`, `destinationHubId`, `sortBy`, `sortOrder` |
 | GET | `/shipments/search?q=` | Authenticated | Search by tracking number, receiver, sender, phone or address |
 | GET | `/shipments/my-assigned` | Courier | Active shipments assigned to the courier |
+| GET | `/shipments/courier-stats` | Courier | Delivery counts, success rate, earnings and six month trend |
 | GET | `/shipments/track/:trackingNumber` | Public | Public tracking timeline |
 | GET | `/shipments/:id` | Authenticated | Shipment details with timeline and payments |
 | PATCH | `/shipments/:id` | Customer | Edit an unpaid pending shipment |

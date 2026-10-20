@@ -41,6 +41,7 @@ router.get(
   validateRequest({ query: shipmentQuerySchema }),
   shipmentController.getMyAssignedShipments,
 );
+router.get("/courier-stats", auth(Role.COURIER), shipmentController.getCourierStats);
 
 router.post(
   "/",

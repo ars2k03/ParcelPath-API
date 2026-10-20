@@ -41,6 +41,11 @@ const getMyAssignedShipments: RequestHandler = async (req, res) => {
   sendResponse(res, { message: "Assigned shipments retrieved successfully", data: result });
 };
 
+const getCourierStats: RequestHandler = async (req, res) => {
+  const result = await shipmentService.getCourierStats(req.user);
+  sendResponse(res, { message: "Courier statistics retrieved successfully", data: result });
+};
+
 const trackShipment: RequestHandler<{ trackingNumber: string }> = async (req, res) => {
   const result = await shipmentService.trackShipment(req.params.trackingNumber);
   sendResponse(res, { message: "Shipment tracking retrieved successfully", data: result });
@@ -91,6 +96,7 @@ export const shipmentController = {
   getShipments,
   searchShipments,
   getMyAssignedShipments,
+  getCourierStats,
   trackShipment,
   getShipmentById,
   updateShipment,

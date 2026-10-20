@@ -70,7 +70,7 @@
 ## 📋 Project Requirements
 
 > ⏱️ **Detailed Guidelines:** Please read the complete project requirements, tech stack, and API rules here:  
-> 👉 [Project Requirements & API Guidelines](./project_requirements.md)
+> 👉 [Project Requirements & API Guidelines](./REQUIREMENT.md)
 
 ---
 

@@ -130,7 +130,7 @@ const getDashboardStats = () =>
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
     const [usersByRole, shipmentsByStatus, revenue, activeHubs, recentShipments, paymentsByStatus] =
-      await prisma.$transaction([
+      await Promise.all([
         prisma.user.groupBy({
           by: ["role"],
           where: { deletedAt: null },

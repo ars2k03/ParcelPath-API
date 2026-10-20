@@ -1,3 +1,4 @@
+import { Agent } from "node:https";
 import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
 import { AppError } from "../errors/AppError.js";
 import { env } from "./env.js";
@@ -9,11 +10,19 @@ cloudinary.config({
   secure: true,
 });
 
+const UPLOAD_TIMEOUT_MS = 30_000;
+const uploadAgent = new Agent({ keepAlive: true, timeout: UPLOAD_TIMEOUT_MS });
+
 export const uploadImage = (buffer: Buffer, folder: string) =>
   new Promise<UploadApiResponse>((resolve, reject) => {
     cloudinary.uploader
       .upload_stream(
-        { folder: `parcelpath/${folder}`, resource_type: "image" },
+        {
+          folder: `parcelpath/${folder}`,
+          resource_type: "image",
+          timeout: UPLOAD_TIMEOUT_MS,
+          agent: uploadAgent,
+        },
         (error, result) => {
           if (error || !result) {
             console.error("Cloudinary upload failed:", error);

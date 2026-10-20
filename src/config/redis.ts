@@ -1,7 +1,14 @@
 import { createClient } from "redis";
 import { env } from "./env.js";
 
-export const redis = createClient({ url: env.REDIS_URL });
+export const redis = createClient({
+  url: env.REDIS_URL,
+  socket: {
+    connectTimeout: 5000,
+    reconnectStrategy: (retries) =>
+      retries > 3 ? new Error("Redis connection failed") : Math.min(retries * 200, 1000),
+  },
+});
 
 redis.on("error", (error) => {
   console.error("Redis error:", error.message);

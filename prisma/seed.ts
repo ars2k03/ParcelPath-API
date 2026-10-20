@@ -56,7 +56,7 @@ const upsertUser = async (name: string, email: string, password: string, role: R
   const hashedPassword = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT_ROUNDS ?? 12));
   return prisma.user.upsert({
     where: { email },
-    update: { role, password: hashedPassword, deletedAt: null },
+    update: { name, role, password: hashedPassword, deletedAt: null },
     create: { name, email, password: hashedPassword, role },
   });
 };
@@ -65,13 +65,13 @@ const main = async () => {
   const demoPassword = requireEnv("SEED_DEMO_PASSWORD");
 
   await upsertUser(
-    "System Admin",
+    "Tanvir Ahmed",
     requireEnv("SEED_ADMIN_EMAIL"),
     requireEnv("SEED_ADMIN_PASSWORD"),
     Role.ADMIN,
   );
-  await upsertUser("Demo Courier", "courier@parcelpath.com", demoPassword, Role.COURIER);
-  await upsertUser("Demo Customer", "customer@parcelpath.com", demoPassword, Role.CUSTOMER);
+  await upsertUser("Rakib Hossain", "courier@parcelpath.com", demoPassword, Role.COURIER);
+  await upsertUser("Nusrat Jahan", "customer@parcelpath.com", demoPassword, Role.CUSTOMER);
 
   for (const hub of hubs) {
     await prisma.hub.upsert({

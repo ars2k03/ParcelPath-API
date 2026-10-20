@@ -17,7 +17,7 @@ app.use("/api/v1/payments/webhook", express.raw({ type: "application/json" }));
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (_req, res) => {
+app.get(["/", "/api/v1"], (_req, res) => {
   sendResponse(res, {
     message: "ParcelPath API is running",
     data: { name: "ParcelPath", version: "v1" },

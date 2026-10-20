@@ -25,3 +25,11 @@ export const authLimiter = rateLimit({
   legacyHeaders: false,
   handler,
 });
+
+export const contactLimiter = rateLimit({
+  windowMs: FIFTEEN_MINUTES,
+  limit: 5,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  handler,
+});

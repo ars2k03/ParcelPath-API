@@ -183,6 +183,9 @@ List endpoints return `data.meta` (`page`, `limit`, `total`, `totalPages`) and `
 | PATCH | `/admin/users/:id/status` | Admin | Block or unblock a user |
 | GET | `/admin/dashboard-stats` | Admin | Users, shipments, revenue and hub statistics |
 | GET | `/admin/audit-logs` | Admin | Audit trail with `action`, `entity`, `entityId`, `actorId` filters |
+| POST | `/contact` | Public | Send a message to the support team |
+| GET | `/contact` | Admin | List contact messages with `searchTerm` and `isRead` filters |
+| PATCH | `/contact/:id` | Admin | Mark a contact message as read or unread |
 
 ## Payment Flow
 
@@ -220,7 +223,8 @@ src/
     ├── hub/
     ├── shipment/
     ├── payment/
-    └── admin/
+    ├── admin/
+    └── contact/
 ```
 
 Each module follows Route → Controller → Service → Prisma, with Zod schemas in `*.validation.ts`.

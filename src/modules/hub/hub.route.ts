@@ -18,6 +18,7 @@ router.post(
   validateRequest({ body: createHubSchema }),
   hubController.createHub,
 );
+router.get("/public", hubController.getPublicHubs);
 router.get("/", auth(), validateRequest({ query: hubQuerySchema }), hubController.getHubs);
 router.get("/:id", auth(), validateRequest({ params: hubIdParamSchema }), hubController.getHubById);
 router.patch(

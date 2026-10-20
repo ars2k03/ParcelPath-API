@@ -153,6 +153,7 @@ List endpoints return `data.meta` (`page`, `limit`, `total`, `totalPages`) and `
 | PATCH | `/users/me` | Authenticated | Update name, phone or avatar (multipart) |
 | POST | `/hubs` | Admin | Create a hub |
 | GET | `/hubs` | Authenticated | List hubs with `page`, `limit`, `searchTerm`, `city`, `isActive`, `sortBy`, `sortOrder` |
+| GET | `/hubs/public` | Public | Active hubs for pricing and hub locations |
 | GET | `/hubs/:id` | Authenticated | Get a hub |
 | PATCH | `/hubs/:id` | Admin | Update a hub |
 | DELETE | `/hubs/:id` | Admin | Soft delete a hub with no active shipments |

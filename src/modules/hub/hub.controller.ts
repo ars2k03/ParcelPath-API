@@ -15,6 +15,11 @@ const getHubs: RequestHandler = async (req, res) => {
   sendResponse(res, { message: "Hubs retrieved successfully", data: result });
 };
 
+const getPublicHubs: RequestHandler = async (_req, res) => {
+  const result = await hubService.getPublicHubs();
+  sendResponse(res, { message: "Active hubs retrieved successfully", data: result });
+};
+
 const getHubById: RequestHandler<{ id: string }> = async (req, res) => {
   const result = await hubService.getHubById(req.params.id);
   sendResponse(res, { message: "Hub retrieved successfully", data: result });
@@ -33,6 +38,7 @@ const deleteHub: RequestHandler<{ id: string }> = async (req, res) => {
 export const hubController = {
   createHub,
   getHubs,
+  getPublicHubs,
   getHubById,
   updateHub,
   deleteHub,

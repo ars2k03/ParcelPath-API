@@ -66,6 +66,15 @@ const getHubs = (query: HubQuery) =>
     return buildPaginatedResult(items, total, page, limit);
   });
 
+const getPublicHubs = () =>
+  remember("hubs:public", HUB_CACHE_TTL_SECONDS, () =>
+    prisma.hub.findMany({
+      where: { deletedAt: null, isActive: true },
+      select: { id: true, name: true, code: true, city: true, address: true, phone: true },
+      orderBy: { name: "asc" },
+    }),
+  );
+
 const getHubById = (id: string) =>
   remember(`hubs:detail:${id}`, HUB_CACHE_TTL_SECONDS, () => findActiveHubOrThrow(id));
 
@@ -127,6 +136,7 @@ const deleteHub = async (actor: Actor, id: string) => {
 export const hubService = {
   createHub,
   getHubs,
+  getPublicHubs,
   getHubById,
   updateHub,
   deleteHub,

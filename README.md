@@ -96,7 +96,8 @@ The API runs at `http://localhost:5000/api/v1`.
 | --- | --- |
 | `NODE_ENV` | `development` or `production` |
 | `PORT` | Local server port |
-| `APP_URL` | Public base URL of this API, used for Stripe redirect URLs |
+| `APP_URL` | Public base URL of this API |
+| `CLIENT_URL` | Frontend base URL, used for Stripe success and cancel redirects |
 | `CORS_ORIGIN` | Comma separated list of allowed origins |
 | `DATABASE_URL` | PostgreSQL connection string |
 | `REDIS_URL` | Redis connection string |
@@ -169,8 +170,8 @@ List endpoints return `data.meta` (`page`, `limit`, `total`, `totalPages`) and `
 | POST | `/shipments/:id/cancel` | Customer, Admin | Cancel before pickup with automatic refund |
 | POST | `/payments/initiate` | Customer | Create a Stripe Checkout session |
 | POST | `/payments/webhook` | Stripe | Verify signature and fulfil payments |
-| GET | `/payments/success?session_id=` | Public | Stripe success redirect, verifies payment |
-| GET | `/payments/cancel?payment_id=` | Public | Stripe cancel redirect, expires the session |
+| GET | `/payments/success?session_id=` | Public | Verifies a completed checkout session |
+| GET | `/payments/cancel?payment_id=` | Public | Expires a cancelled checkout session |
 | GET | `/payments/my` | Customer | Own payment history |
 | GET | `/payments/:id` | Owner, Admin | Payment details |
 | GET | `/admin/users` | Admin | List users with `role`, `status`, `searchTerm` filters |
@@ -184,10 +185,10 @@ List endpoints return `data.meta` (`page`, `limit`, `total`, `totalPages`) and `
 1. The customer calls `POST /payments/initiate` and opens the returned `checkoutUrl`.
 2. The customer pays on Stripe Checkout (test card `4242 4242 4242 4242`).
 3. Stripe sends `checkout.session.completed` to `/payments/webhook`. The signature is verified and the payment is fulfilled once, even if the event is delivered more than once.
-4. Stripe redirects the customer to `/payments/success`, which also verifies the session with Stripe.
+4. Stripe redirects the customer to the frontend `/payment/success` page, which calls `/payments/success` to verify the session with Stripe.
 5. The payment becomes `PAID`, the shipment gets `paidAt` and an admin can assign a courier.
 
-Cancelling on Stripe redirects to `/payments/cancel`, which expires the session. Expired or failed sessions are updated by the webhook. Test webhooks locally with:
+Cancelling on Stripe redirects to the frontend `/payment/cancel` page, which calls `/payments/cancel` to expire the session. Expired or failed sessions are updated by the webhook. Test webhooks locally with:
 
 ```bash
 stripe listen --forward-to localhost:5000/api/v1/payments/webhook

@@ -84,8 +84,8 @@ const initiatePayment = async (user: AuthUser, shipmentId: string) => {
         },
       },
     ],
-    success_url: `${env.APP_URL}/api/v1/payments/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${env.APP_URL}/api/v1/payments/cancel?payment_id=${paymentId}`,
+    success_url: `${env.CLIENT_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${env.CLIENT_URL}/payment/cancel?payment_id=${paymentId}`,
     expires_at: Math.floor(Date.now() / 1000) + CHECKOUT_EXPIRY_SECONDS,
   });
 

@@ -7,7 +7,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:5000/api/v1"
+      "value": "https://parcel-path-api.vercel.app/api/v1"
     },
     {
       "key": "customerToken",
@@ -251,7 +251,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"<admin email>\",\n  \"password\": \"<admin password>\"\n}",
+              "raw": "{\n  \"email\": \"admin@parcelpath.com\",\n  \"password\": \"<admin password>\"\n}",
               "options": {
                 "raw": {
                   "language": "json"

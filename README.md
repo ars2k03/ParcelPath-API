@@ -13,7 +13,7 @@ Customer → Create Shipment → Pay → Courier Assigned → Picked Up → Orig
 Project Name    : ParcelPath - Courier & Logistics Platform
 Backend Repo    : https://github.com/ars2k03/ParcelPath-API
 Live API        : https://parcel-path-api.vercel.app/api/v1
-API Docs        : docs/ParcelPath.postman_collection.json
+API Docs        : https://documenter.getpostman.com/view/54739800/2sBYHSz1qW
 Demo Video      : <video url>
 Admin Email     : admin@parcelpath.com
 Admin Password  : Shared privately in the submission form

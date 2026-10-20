@@ -226,3 +226,18 @@ model AuditLog {
   @@index([action, createdAt])
   @@map("audit_logs")
 }
+
+model ContactMessage {
+  id        String   @id @default(uuid(7))
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isRead, createdAt])
+  @@map("contact_messages")
+}

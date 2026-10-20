@@ -12,7 +12,7 @@ Customer → Create Shipment → Pay → Courier Assigned → Picked Up → Orig
 ```text
 Project Name    : ParcelPath - Courier & Logistics Platform
 Backend Repo    : <github repository url>
-Live API        : <vercel deployment url>/api/v1
+Live API        : https://parcel-path-api.vercel.app/api/v1
 API Docs        : docs/ParcelPath.postman_collection.json
 Demo Video      : <video url>
 Admin Email     : <SEED_ADMIN_EMAIL>

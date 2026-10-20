@@ -125,37 +125,85 @@ const updateUserStatus = async (actor: Actor, id: string, status: UserStatus) =>
   });
 };
 
+const TREND_DAYS = 14;
+
+const toDayKey = (date: Date) => date.toISOString().slice(0, 10);
+
+const buildDailyTrend = (
+  since: Date,
+  shipments: { createdAt: Date }[],
+  payments: { paidAt: Date | null; amount: Prisma.Decimal }[],
+) => {
+  const days = Array.from({ length: TREND_DAYS }, (_, index) => {
+    const date = new Date(since.getTime() + index * 24 * 60 * 60 * 1000);
+    return { date: toDayKey(date), shipments: 0, revenue: 0 };
+  });
+  const byDate = new Map(days.map((day) => [day.date, day]));
+
+  for (const { createdAt } of shipments) {
+    const day = byDate.get(toDayKey(createdAt));
+    if (day) day.shipments += 1;
+  }
+  for (const { paidAt, amount } of payments) {
+    if (!paidAt) continue;
+    const day = byDate.get(toDayKey(paidAt));
+    if (day) day.revenue = Math.round((day.revenue + Number(amount)) * 100) / 100;
+  }
+
+  return days;
+};
+
 const getDashboardStats = () =>
   remember("admin:stats", 60, async () => {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const today = new Date();
+    const trendStart = new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - (TREND_DAYS - 1)),
+    );
 
-    const [usersByRole, shipmentsByStatus, revenue, activeHubs, recentShipments, paymentsByStatus] =
-      await Promise.all([
-        prisma.user.groupBy({
-          by: ["role"],
-          where: { deletedAt: null },
-          _count: { _all: true },
-          orderBy: { role: "asc" },
-        }),
-        prisma.shipment.groupBy({
-          by: ["status"],
-          where: { deletedAt: null },
-          _count: { _all: true },
-          orderBy: { status: "asc" },
-        }),
-        prisma.payment.aggregate({
-          where: { status: PaymentStatus.PAID },
-          _sum: { amount: true },
-          _count: { _all: true },
-        }),
-        prisma.hub.count({ where: { deletedAt: null, isActive: true } }),
-        prisma.shipment.count({ where: { deletedAt: null, createdAt: { gte: sevenDaysAgo } } }),
-        prisma.payment.groupBy({
-          by: ["status"],
-          _count: { _all: true },
-          orderBy: { status: "asc" },
-        }),
-      ]);
+    const [
+      usersByRole,
+      shipmentsByStatus,
+      revenue,
+      activeHubs,
+      recentShipments,
+      paymentsByStatus,
+      trendShipments,
+      trendPayments,
+    ] = await Promise.all([
+      prisma.user.groupBy({
+        by: ["role"],
+        where: { deletedAt: null },
+        _count: { _all: true },
+        orderBy: { role: "asc" },
+      }),
+      prisma.shipment.groupBy({
+        by: ["status"],
+        where: { deletedAt: null },
+        _count: { _all: true },
+        orderBy: { status: "asc" },
+      }),
+      prisma.payment.aggregate({
+        where: { status: PaymentStatus.PAID },
+        _sum: { amount: true },
+        _count: { _all: true },
+      }),
+      prisma.hub.count({ where: { deletedAt: null, isActive: true } }),
+      prisma.shipment.count({ where: { deletedAt: null, createdAt: { gte: sevenDaysAgo } } }),
+      prisma.payment.groupBy({
+        by: ["status"],
+        _count: { _all: true },
+        orderBy: { status: "asc" },
+      }),
+      prisma.shipment.findMany({
+        where: { deletedAt: null, createdAt: { gte: trendStart } },
+        select: { createdAt: true },
+      }),
+      prisma.payment.findMany({
+        where: { status: PaymentStatus.PAID, paidAt: { gte: trendStart } },
+        select: { paidAt: true, amount: true },
+      }),
+    ]);
 
     const shipmentCounts = Object.fromEntries(
       shipmentsByStatus.map((row) => [row.status, row._count._all]),
@@ -175,6 +223,7 @@ const getDashboardStats = () =>
         byStatus: Object.fromEntries(paymentsByStatus.map((row) => [row.status, row._count._all])),
       },
       activeHubs,
+      dailyTrend: buildDailyTrend(trendStart, trendShipments, trendPayments),
     };
   });
 

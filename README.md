@@ -181,7 +181,7 @@ List endpoints return `data.meta` (`page`, `limit`, `total`, `totalPages`) and `
 | GET | `/admin/users` | Admin | List users with `role`, `status`, `searchTerm` filters |
 | PATCH | `/admin/users/:id/role` | Admin | Change a user's role |
 | PATCH | `/admin/users/:id/status` | Admin | Block or unblock a user |
-| GET | `/admin/dashboard-stats` | Admin | Users, shipments, revenue and hub statistics |
+| GET | `/admin/dashboard-stats` | Admin | Users, shipments, revenue, hub statistics and a 14 day trend |
 | GET | `/admin/audit-logs` | Admin | Audit trail with `action`, `entity`, `entityId`, `actorId` filters |
 | POST | `/contact` | Public | Send a message to the support team |
 | GET | `/contact` | Admin | List contact messages with `searchTerm` and `isRead` filters |
